@@ -2,6 +2,12 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _IssueAdd = require('./IssueAdd.js');
+
+var _IssueAdd2 = _interopRequireDefault(_IssueAdd);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -164,71 +170,19 @@ var IssueTable = function (_React$Component3) {
 	return IssueTable;
 }(React.Component);
 
-var IssueAdd = function (_React$Component4) {
-	_inherits(IssueAdd, _React$Component4);
-
-	function IssueAdd() {
-		_classCallCheck(this, IssueAdd);
-
-		var _this4 = _possibleConstructorReturn(this, (IssueAdd.__proto__ || Object.getPrototypeOf(IssueAdd)).call(this));
-
-		_this4.handleSubmit = _this4.handleSubmit.bind(_this4);
-		return _this4;
-	}
-
-	_createClass(IssueAdd, [{
-		key: 'handleSubmit',
-		value: function handleSubmit(e) {
-			e.preventDefault();
-			var form = document.forms.issueAdd;
-			this.props.createIssue({
-				owner: form.owner.value,
-				title: form.title.value,
-				status: 'New',
-				created: new Date()
-			});
-
-			form.owner.value = form.title.value = "";
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			return React.createElement(
-				'div',
-				null,
-				React.createElement(
-					'form',
-					{ name: 'issueAdd', onSubmit: this.handleSubmit },
-					React.createElement('input', { type: 'text', placeholder: 'owner', name: 'owner' }),
-					' \xA0',
-					React.createElement('input', { type: 'text', placeholder: 'title', name: 'title' }),
-					' \xA0',
-					React.createElement(
-						'button',
-						{ type: 'submit' },
-						'Add'
-					)
-				)
-			);
-		}
-	}]);
-
-	return IssueAdd;
-}(React.Component);
-
-var IssueList = function (_React$Component5) {
-	_inherits(IssueList, _React$Component5);
+var IssueList = function (_React$Component4) {
+	_inherits(IssueList, _React$Component4);
 
 	function IssueList() {
 		_classCallCheck(this, IssueList);
 
-		var _this5 = _possibleConstructorReturn(this, (IssueList.__proto__ || Object.getPrototypeOf(IssueList)).call(this));
+		var _this4 = _possibleConstructorReturn(this, (IssueList.__proto__ || Object.getPrototypeOf(IssueList)).call(this));
 
-		_this5.state = { issues: [] };
+		_this4.state = { issues: [] };
 		//this.createTestIssue = this.createTestIssue.bind(this);
-		_this5.createIssue = _this5.createIssue.bind(_this5);
+		_this4.createIssue = _this4.createIssue.bind(_this4);
 		//setTimeout(this.createTestIssue, 2000);
-		return _this5;
+		return _this4;
 	}
 
 	_createClass(IssueList, [{
@@ -239,7 +193,7 @@ var IssueList = function (_React$Component5) {
 	}, {
 		key: 'loadData',
 		value: function loadData() {
-			var _this6 = this;
+			var _this5 = this;
 
 			fetch('/api/issues').then(function (response) {
 				if (response.ok) {
@@ -249,7 +203,7 @@ var IssueList = function (_React$Component5) {
 							issue.created = new Date(issue.created);
 							if (issue.completionDate) issue.completionDate = new Date(issue.completionDate);
 						});
-						_this6.setState({ issues: data.records });
+						_this5.setState({ issues: data.records });
 					});
 				} else {
 					response.json().then(function (error) {
@@ -263,7 +217,7 @@ var IssueList = function (_React$Component5) {
 	}, {
 		key: 'createIssue',
 		value: function createIssue(newIssue) {
-			var _this7 = this;
+			var _this6 = this;
 
 			fetch('/api/issues', {
 				method: 'POST',
@@ -274,8 +228,8 @@ var IssueList = function (_React$Component5) {
 					response.json().then(function (updatedIssue) {
 						updatedIssue.created = new Date(updatedIssue.created);
 						if (updatedIssue.completionDate) updatedIssue.completionDate = new Date(updatedIssue.completionDate);
-						var newIssues = _this7.state.issues.concat(updatedIssue);
-						_this7.setState({ issues: newIssues });
+						var newIssues = _this6.state.issues.concat(updatedIssue);
+						_this6.setState({ issues: newIssues });
 					}).catch(function (error) {
 						alert("Error sending data to the server : ", error.message);
 					});
@@ -302,7 +256,7 @@ var IssueList = function (_React$Component5) {
 				React.createElement('hr', null),
 				React.createElement(IssueTable, { issues: this.state.issues }),
 				React.createElement('hr', null),
-				React.createElement(IssueAdd, { createIssue: this.createIssue }),
+				React.createElement(_IssueAdd2.default, { createIssue: this.createIssue }),
 				React.createElement('hr', null)
 			);
 		}

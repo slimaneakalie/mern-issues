@@ -1,8 +1,20 @@
+import express from 'express';
+import bodyParser from 'body-parser';
+import issueValidator from './issue.js';
+import SourceMapSupport from 'source-map-support';
+import { MongoClient } from 'mongodb';
+import 'babel-polyfill';
+
+/*
 const issueValidator = require('./issue.js');
 const bodyParser = require('body-parser');
 const express = require('express');
-const app = express();
+
 const MongoClient = require('mongodb').MongoClient;
+*/
+
+SourceMapSupport.install();
+const app = express();
 let db;
 
 /* const issues = [
@@ -55,14 +67,15 @@ app.post('/api/issues', (req, res) => {
 		return;
 	}
 
-	db.collection('issues').insertOne(newIssue).then( result =>
-		db.collection('issues').find({ _id : result.insertedId }).limit(1).next()
-	).then(newIssue => {
-		res.json(newIssue);
-	}).catch(error => {
-		console.log(error);
-		res.status(500).json({ message : `Internal serve error : ${error}` });
-	});
+	db.collection('issues').insertOne(Issue.cleanupIssue(newIssue))
+		.then( result =>
+			db.collection('issues').find({ _id : result.insertedId }).limit(1).next()
+		).then(newIssue => {
+			res.json(newIssue);
+		}).catch(error => {
+			console.log(error);
+			res.status(500).json({ message : `Internal serve error : ${error}` });
+		});
 	/*issues.push(newIssue);
 	res.json(newIssue);	*/
 	

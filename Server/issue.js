@@ -1,5 +1,3 @@
-'use strict';
-
 const REQUIRED = 'required';
 const OPTIONAL = 'optional';
 
@@ -9,7 +7,7 @@ const validIssueStatus = {
 	Assigned : true,
 	Fixed : true,
 	Verified : true,
-	Closed : true
+	Closed : true,
 };
 
 const issueFieldType = {
@@ -18,25 +16,34 @@ const issueFieldType = {
 	effort : OPTIONAL,
 	created : REQUIRED,
 	completionDate : OPTIONAL,
-	title : REQUIRED
+	title : REQUIRED,
 };
+
+function cleanupIssue(issue){
+	const cleanedUpIssue = {};
+	Object.keys(issue).forEach(field => {
+		if (issueFieldType[field]) cleanedUpIssue[field] = issue[field];
+	});
+	return cleanedUpIssue;
+}
 
 function validateIssue(issue)
 {
-	for (const field in issueFieldType){
-		const type = issueFieldType[field];
-		if (!type)
-			delete issue[field];
-		else if (type == REQUIRED && !issue[field])
-			return `${field} is required.`;
+	const errors = [];
+	Object.keys(issueFieldType).forEach(field => {
+		if (issueFieldType[field] === REQUIRED && !issue[field]){
+			errors.push(`Missing mandatory field : ${field}`);
+		}
+	});
+
+	if (!validIssueStatus[issue.status]){
+		errors.push(`${issue.status} is not a valid status.`);
 	}
 
-	if (!validIssueStatus[issue.status])
-		return `${issue.status} is not a valid status.`;
-
-	return null;
+	return (errors.length ? errors.join(';') : null);
 }
 
-module.exports = {
-	validateIssue
+export default {
+	validateIssue,
+	cleanupIssue,
 };
